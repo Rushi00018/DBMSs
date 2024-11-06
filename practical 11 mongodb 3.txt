@@ -1,0 +1,37 @@
+
+3..Implement Map reduces operation with suitable example using MongoDB.
+
+
+
+// Create the 'order' collection
+db.createCollection('order');
+
+// Insert documents into the 'order' collection
+db.order.insert({'cust_id': 'A123', 'amt': 500});
+db.order.insert({'cust_id': 'A123', 'amt': 700});
+db.order.insert({'cust_id': 'B123', 'amt': 900});
+
+// Display all documents in the 'order' collection
+db.order.find();
+
+// Define the map function
+var mapFunction = function() {
+    emit(this.cust_id, this.amt);
+};
+
+// Define the reduce function
+var reduceFunction = function(cust_id, prices) {
+    return Array.sum(prices);
+};
+
+// Run the mapReduce function to calculate total amount per customer
+db.order.mapReduce(
+    mapFunction,
+    reduceFunction,
+    {
+        out: 'result'
+    }
+);
+
+// Display the results from the 'result' collection
+db.result.find();

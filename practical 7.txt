@@ -1,0 +1,66 @@
+7..Database Trigger (All Types: Row level and Statement level triggers, Before and After Triggers). 
+Write a database trigger on Library table. The System should keep track of the records that are  being updated or deleted. The old value of updated or deleted records should be added in Library_Audit table. 
+
+
+
+
+
+-- Create Library table with sample fields
+CREATE TABLE Library (
+    book_id INT PRIMARY KEY,
+    book_title VARCHAR(100),
+    author VARCHAR(100),
+    price DECIMAL(10, 2),
+    quantity INT
+);
+
+
+-- Insert values into the Library table
+INSERT INTO Library (book_id, book_title, author, price, quantity) VALUES
+    (1, 'The Great Gatsby', 'F. Scott Fitzgerald', 299.99, 10),
+    (2, '1984', 'George Orwell', 199.99, 15),
+    (3, 'To Kill a Mockingbird', 'Harper Lee', 249.99, 8),
+    (4, 'Pride and Prejudice', 'Jane Austen', 149.99, 20);
+
+
+-- Create Library_Audit table to keep track of changes (without audit_id, action_type, and action_time)
+CREATE TABLE Library_Audit (
+    book_id INT,
+    book_title VARCHAR(100),
+    author VARCHAR(100),
+    price DECIMAL(10, 2),
+    quantity INT
+);
+
+
+
+-- Change the delimiter
+DELIMITER //
+
+-- BEFORE UPDATE Trigger
+CREATE TRIGGER before_update_library
+BEFORE UPDATE ON Library
+FOR EACH ROW
+BEGIN
+    INSERT INTO Library_Audit (book_id, book_title, author, price, quantity)
+    VALUES (OLD.book_id, OLD.book_title, OLD.author, OLD.price, OLD.quantity);
+END;
+//
+
+-- BEFORE DELETE Trigger
+CREATE TRIGGER before_delete_library
+BEFORE DELETE ON Library
+FOR EACH ROW
+BEGIN
+    INSERT INTO Library_Audit (book_id, book_title, author, price, quantity)
+    VALUES (OLD.book_id, OLD.book_title, OLD.author, OLD.price, OLD.quantity);
+END;
+//
+
+-- Reset the delimiter back to default
+DELIMITER ;
+
+-- Delete a specific book from the Library table
+DELETE FROM Library WHERE book_id = 2;
+
+select * from Library_Audit;

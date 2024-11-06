@@ -1,0 +1,104 @@
+4..Unnamed PL/SQL code block: Use of Control structure and Exception handling is mandatory. 
+Suggested Problem statement: 
+Consider Tables:  
+1. Borrower(Roll_no, Name, DateofIssue, NameofBook, Status)  
+2. Fine(Roll_no,Date,Amt) 
+
+
+
+CREATE DATABASE library;
+
+-- Switch to the desired database
+USE library;
+
+-- Create the Borrower table
+CREATE TABLE Borrower (
+    Rollno INT, 
+    Name VARCHAR(20),
+    DateofIssue DATE,
+    NameofBook VARCHAR(30),
+    Status VARCHAR(10)
+);
+
+-- Insert records into the Borrower table
+INSERT INTO Borrower VALUES
+(41, 'Abhisek', '2022-09-19', 'Operating System', 'I'),
+(5, 'Karan', '2022-07-24', 'Object Oriented Programming', 'I'),
+(23, 'Baliram', '2022-06-12', 'Microprocessor', 'I'),
+(48, 'Mayur', '2022-04-19', 'Mechanics', 'I'),
+(47, 'Sanket', '2022-05-20', 'DS', 'I'),
+(25, 'Vishwa', '2022-06-21', 'DELD', 'I');
+
+select * from Borrower;
+-- Create the Fine table
+CREATE TABLE Fine (
+    Rollno INT(4),
+    Date DATE,
+    Amount INT(10)
+);
+
+-- Set delimiter to define a procedure
+DELIMITER //
+
+-- Create a procedure to calculate fines
+CREATE PROCEDURE calc_Fine(IN r INT, IN b VARCHAR(30))
+BEGIN
+    DECLARE doi DATE;
+    DECLARE diff INT;
+
+    -- Select the date of issue for the book
+    SELECT DateofIssue INTO doi
+    FROM Borrower
+    WHERE Rollno = r AND NameofBook = b;
+
+    -- Calculate the difference in days from the current date
+    SELECT DATEDIFF(CURDATE(), doi) INTO diff;
+
+    -- Insert fine if the difference is between 15 and 30 days
+    IF diff >= 15 AND diff <= 30 THEN
+        INSERT INTO Fine VALUES(r, CURDATE(), diff * 5);
+    END IF;
+
+    -- Insert fine if the difference is greater than 30 days
+    IF diff > 30 THEN
+        INSERT INTO Fine VALUES(r, CURDATE(), diff * 50);
+    END IF;
+END //
+
+-- Create a procedure to submit a book
+CREATE PROCEDURE submit(IN r INT)
+BEGIN
+    -- Update the status of the borrower
+    UPDATE Borrower SET Status = 'R' WHERE Rollno = r;
+
+    -- Remove any fines associated with the borrower
+    DELETE FROM Fine WHERE Rollno = r;
+END //
+
+-- Reset the delimiter back to semicolon
+DELIMITER ;
+
+-- Call the calc_Fine procedure for different borrowers
+CALL calc_Fine(41, 'Operating System');
+CALL calc_Fine(5, 'Object Oriented Programming');
+CALL calc_Fine(23, 'Microprocessor');
+CALL calc_Fine(48, 'Mechanics');
+CALL calc_Fine(47, 'DS');
+CALL calc_Fine(25, 'DELD');
+
+-- Display the fines recorded
+SELECT * FROM Fine;
+
+-- Call the submit procedure to update the status and clear fines
+CALL submit(41);
+CALL submit(5);
+CALL submit(23);
+CALL submit(48);
+CALL submit(47);
+CALL submit(25);
+
+-- Display fines after submissions (should be empty)
+SELECT * FROM Fine;
+
+-- Display the current status of borrowers
+SELECT * FROM Borrower;

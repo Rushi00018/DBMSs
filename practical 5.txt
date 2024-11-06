@@ -1,0 +1,82 @@
+5..Named PL/SQL Block: PL/SQL Stored Procedure and Stored Function. Write a Stored Procedure namely proc_Grade for the categorization of student. If marks scoredby  students in examination is <=1500 and marks>=990 then student will be placed in distinction  category if marks scored are between 989 and 900 category is first class, if marks 899 and 825  category is Higher Second Class. 
+Write a PL/SQL block to use procedure created with above requirement. 
+Stud_Marks(name, total_marks) Result(Roll,Name, Class) 
+
+
+
+drop database SUJAL;
+CREATE DATABASE SUJAL;
+
+-- Use the database
+USE SUJAL;
+
+-- Create the 'marks' table
+CREATE TABLE marks (
+    roll_no INT,
+    name VARCHAR(20),
+    total_marks VARCHAR(20)
+);
+
+-- Create the 'result' table
+CREATE TABLE result (
+    roll_no INT,
+    name VARCHAR(20),
+    class VARCHAR(20)
+);
+
+-- Insert data into the 'marks' table
+INSERT INTO marks (roll_no, name, total_marks) VALUES
+(1, 'Abhishek', 1400),
+(2, 'Karan', 980),
+(3, 'Baliram', 880),
+(4, 'Vishwa', 820),
+(5, 'Amit', 740),
+(6, 'Shrinath', 640);
+
+-- Drop existing procedures and functions if they exist
+DROP PROCEDURE IF EXISTS proc_result;
+DROP FUNCTION IF EXISTS final_result;
+
+-- Create a stored procedure to determine class based on marks
+DELIMITER //
+
+CREATE PROCEDURE proc_result(IN marks INT, OUT class CHAR(20))
+BEGIN
+    IF (marks >= 990 AND marks < 1500) THEN
+        SET class = 'Distinction';
+    ELSEIF (marks >= 890 AND marks < 990) THEN
+        SET class = 'First Class';
+    ELSEIF (marks >= 650 AND marks < 749) THEN
+        SET class = 'Second Class';
+    ELSEIF (marks >= 649 AND marks < 650) THEN
+        SET class = 'Passed';
+    ELSE
+        SET class = 'Fail';
+    END IF;
+END //
+
+DELIMITER ;
+
+-- Create a function to get the final result based on roll number
+DELIMITER //
+
+CREATE FUNCTION final_result(R1 INT)
+RETURNS CHAR(20)
+DETERMINISTIC
+BEGIN
+    DECLARE fmarks INT;
+    DECLARE grade CHAR(20);
+
+    -- Get total marks for the given roll number
+    SELECT total_marks INTO fmarks FROM marks WHERE roll_no = R1;
+
+    -- Call the procedure to determine the grade
+    CALL proc_result(fmarks, grade);
+
+    RETURN grade;
+END //
+
+DELIMITER ;
+
+-- Select roll number, name, and final result class
+SELECT roll_no, name, final_result(roll_no) AS class FROM marks;

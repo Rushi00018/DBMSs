@@ -1,0 +1,116 @@
+3..SQL Queries - all types of Join, Sub-Query and View: 
+Write at least 10 SQL queries for suitable database application using SQL DML statements. 
+Note: Instructor will design the queries which demonstrate the use of concepts like all types of  Join, Sub-Query and View
+
+
+
+-- Use the 'sujal' database
+USE sujal;
+
+-- Create a table 'sujal' with specific columns
+
+CREATE TABLE sujal (
+    Seat_no INT,
+    Roll_no INT,
+    Name VARCHAR(20),
+    department VARCHAR(20),
+    Year_of_study INT,
+    DOB DATE,
+    Mobile_no INT,
+    Email VARCHAR(30)
+);
+
+-- Insert values into the 'sujal' table
+INSERT INTO sujal VALUES 
+    (3214, 23, 'abhishek', 'computer', 3, '2003-10-04', 87882, 'abhi@gmail.com'),
+    (3215, 43, 'mayur', 'computer', 3, '2004-01-04', 94362, 'mayur@gmail.com');
+
+-- Display data from the 'sujal' table
+SELECT * FROM sujal;
+
+-- Create a view 'te' selecting specific columns from 'sujal'
+CREATE VIEW te AS 
+SELECT Seat_no, Roll_no, Name, department 
+FROM sujal;
+
+-- Display selected columns from the 'sujal' table
+SELECT Seat_no, Name FROM sujal;
+
+-- Describe the structure of the 'sujal' table
+DESC sujal;
+
+-- Create a new table 'A'
+CREATE TABLE A (
+    roll_no INT,
+    name CHAR(20),
+    student_id INT,
+    department CHAR(10)
+);
+
+-- Insert values into the 'A' table
+INSERT INTO A VALUES 
+    (1, 'XYZ', 111, 'CS'),
+    (2, 'PQR', 112, 'CS'),
+    (3, 'SUV', 113, 'CS'),
+    (4, 'LMN', 114, 'CS'),
+    (5, 'GHI', 115, 'IT');
+
+-- Create another table 'B'
+CREATE TABLE B (
+    roll_no INT,
+    prn_no INT,
+    mobile_no INT,
+    year CHAR(10)
+);
+
+-- Insert values into the 'B' table
+INSERT INTO B VALUES 
+    (2, 101, 983464, 'Third'),
+    (3, 102, 123456, 'Third'),
+    (4, 103, 846372, 'Third'),
+    (5, 104, 352718, 'Third');
+
+-- Perform an INNER JOIN between 'A' and 'B' tables
+SELECT * FROM A 
+INNER JOIN B ON A.roll_no = B.roll_no;
+
+-- Perform a LEFT OUTER JOIN between 'A' and 'B' tables
+SELECT * FROM A 
+LEFT OUTER JOIN B ON A.roll_no = B.roll_no;
+
+-- Perform a RIGHT OUTER JOIN between 'A' and 'B' tables
+SELECT * FROM A 
+RIGHT OUTER JOIN B ON A.roll_no = B.roll_no;
+
+-- Select records from 'sujal' where Email is not NULL
+SELECT * FROM sujal WHERE Email IS NOT NULL;
+
+-- Create a new table 'employee'
+CREATE TABLE employee (
+    Emp_id INT,
+    Emp_name CHAR(20),
+    join_date DATE,
+    Position CHAR(20),
+    Salary INT
+);
+
+-- Insert values into the 'employee' table
+INSERT INTO employee VALUES 
+    (1, 'abhi', '2019-05-14', 'CEO', 500000),
+    (2, 'omkar', '2017-08-29', 'HR', 87000),
+    (3, 'abbhinay', '2019-09-09', 'HR', 75000),
+    (4, 'ashish', '2011-06-09', 'CEO', 750000);
+
+-- Display all records from the 'employee' table
+SELECT * FROM employee;
+
+-- Retrieve salary of 'omkar' from the 'employee' table
+SELECT salary FROM employee WHERE Emp_name = 'omkar';
+
+-- Select records where salary is greater than 'omkar's salary
+SELECT * FROM employee 
+WHERE salary > (SELECT salary FROM employee WHERE Emp_name = 'omkar');
+
+-- Select records with the same position as 'abhi'
+SELECT * FROM employee 
+WHERE position = (SELECT position FROM employee WHERE Emp_name = 'abhi');

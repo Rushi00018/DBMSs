@@ -1,0 +1,75 @@
+6..Cursors: (All types: Implicit, Explicit, Cursor FOR Loop, Parameterized Cursor) Write a PL/SQL block of code using parameterized Cursor that will merge the data availablein  the newly created table N_RollCall with the data available in the table O_RollCall. If the data in  the first table already exist in the second table then that data should be skipped. 
+Note: Instructor will frame the problem statement for writing PL/SQL block using all types of  Cursors in line with above statement.
+
+
+
+-- Create a new database
+CREATE DATABASE dbms;
+drop database dbms;
+-- Use the newly created database
+USE dbms;
+
+-- Create the original roll call table
+CREATE TABLE o_rollcall (
+    roll_no INT,
+    name VARCHAR(20),
+    address VARCHAR(20)
+);
+
+-- Insert records into the original roll call table
+INSERT INTO o_rollcall (roll_no, name, address) VALUES
+    (1, 'Abhishek', 'Pimpri'),
+    (2, 'Rashmika', 'Chakan'),
+    (3, 'Sakshi', 'Ravet'),
+    (4, 'Mayur', 'Alandi'),
+    (5, 'Amit', 'Elpro'),
+    (6, 'Kajal', 'Mumbai');
+
+-- Select all records from the original roll call table
+SELECT * FROM o_rollcall;
+
+-- Create the new roll call table
+CREATE TABLE n_rollcall (
+    roll_no INT,
+    name VARCHAR(20),
+    address VARCHAR(20)
+);
+
+-- Describe the new roll call table
+DESC n_rollcall;
+
+-- Change the statement delimiter
+DELIMITER //
+
+CREATE PROCEDURE newcurr(IN roll_no0 INT)
+BEGIN
+    DECLARE roll_no1 INT;
+    DECLARE exit_loop BOOLEAN DEFAULT FALSE;
+    DECLARE c1 CURSOR FOR SELECT roll_no FROM o_rollcall WHERE roll_no > roll_no0;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET exit_loop = TRUE;
+
+    OPEN c1;
+
+    emp_loop: LOOP
+        FETCH c1 INTO roll_no1;
+        IF exit_loop THEN
+            CLOSE c1;
+            LEAVE emp_loop;
+        END IF;
+
+        IF NOT EXISTS (SELECT * FROM n_rollcall WHERE roll_no = roll_no1) THEN
+            INSERT INTO n_rollcall (roll_no, name, address)
+            SELECT roll_no, name, address FROM o_rollcall WHERE roll_no = roll_no1;
+        END IF;
+    END LOOP emp_loop;
+
+    CLOSE c1;
+END //
+
+DELIMITER ;
+
+-- Call the stored procedure
+CALL newcurr(0);
+
+-- Select all records from the new roll call table
+SELECT * FROM n_rollcall;

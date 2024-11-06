@@ -1,0 +1,150 @@
+1..MongoDB Queries: 
+Design and Develop MongoDB Queries using CRUD operations. (Use CRUD operations, SAVE method, logical operators etc.)
+
+
+
+test> db.createCollection('Emp');
+{ ok: 1 }
+test> db.Emp.insert({'Emp_id':1,'Emp_name':'shubham','Emp_salary':60000,'Emp_dept':'Comp'});
+DeprecationWarning: Collection.insert() is deprecated. Use insertOne, insertMany, or bulkWrite.
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId('67272bddd35eedd10c0d8190') }
+}
+test> db.Emp.insert({'Emp_id':2,'Emp_name':'omkar','Emp_salary':40000,'Emp_dept':'IT'});
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId('67272be9d35eedd10c0d8191') }
+}
+test> db.Emp.insert({'Emp_id':3,'Emp_name':'vikas','Emp_salary':
+50000,'Emp_dept':'Civil'});
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId('67272bf2d35eedd10c0d8192') }
+}
+test> db.Emp.find();
+[
+  {
+    _id: ObjectId('67272bddd35eedd10c0d8190'),
+    Emp_id: 1,
+    Emp_name: 'shubham',
+    Emp_salary: 60000,
+    Emp_dept: 'Comp'
+  },
+  {
+    _id: ObjectId('67272be9d35eedd10c0d8191'),
+    Emp_id: 2,
+    Emp_name: 'omkar',
+    Emp_salary: 40000,
+    Emp_dept: 'IT'
+  },
+  {
+    _id: ObjectId('67272bf2d35eedd10c0d8192'),
+    Emp_id: 3,
+    Emp_name: 'vikas',
+    Emp_salary: 50000,
+    Emp_dept: 'Civil'
+  }
+]
+test> db.Emp.find({'Emp_salary':{$gt:40000}});
+[
+  {
+    _id: ObjectId('67272bddd35eedd10c0d8190'),
+    Emp_id: 1,
+    Emp_name: 'shubham',
+    Emp_salary: 60000,
+    Emp_dept: 'Comp'
+  },
+  {
+    _id: ObjectId('67272bf2d35eedd10c0d8192'),
+    Emp_id: 3,
+    Emp_name: 'vikas',
+    Emp_salary: 50000,
+    Emp_dept: 'Civil'
+  }
+]
+test> db.Emp.find({'Emp_salary':{$gte:40000}});
+[
+  {
+    _id: ObjectId('67272bddd35eedd10c0d8190'),
+    Emp_id: 1,
+    Emp_name: 'shubham',
+    Emp_salary: 60000,
+    Emp_dept: 'Comp'
+  },
+  {
+    _id: ObjectId('67272be9d35eedd10c0d8191'),
+    Emp_id: 2,
+    Emp_name: 'omkar',
+    Emp_salary: 40000,
+    Emp_dept: 'IT'
+  },
+  {
+    _id: ObjectId('67272bf2d35eedd10c0d8192'),
+    Emp_id: 3,
+    Emp_name: 'vikas',
+    Emp_salary: 50000,
+    Emp_dept: 'Civil'
+  }
+]
+test> db.Emp.find({'Emp_salary':{$lt:60000}});
+[
+  {
+    _id: ObjectId('67272be9d35eedd10c0d8191'),
+    Emp_id: 2,
+    Emp_name: 'omkar',
+    Emp_salary: 40000,
+    Emp_dept: 'IT'
+  },
+  {
+    _id: ObjectId('67272bf2d35eedd10c0d8192'),
+    Emp_id: 3,
+    Emp_name: 'vikas',
+    Emp_salary: 50000,
+    Emp_dept: 'Civil'
+  }
+]
+test> db.Emp.find({'Emp_salary':{$lte:50000}});
+[
+  {
+    _id: ObjectId('67272be9d35eedd10c0d8191'),
+    Emp_id: 2,
+    Emp_name: 'omkar',
+    Emp_salary: 40000,
+    Emp_dept: 'IT'
+  },
+  {
+    _id: ObjectId('67272bf2d35eedd10c0d8192'),
+    Emp_id: 3,
+    Emp_name: 'vikas',
+    Emp_salary: 50000,
+    Emp_dept: 'Civil'
+  }
+]
+test> db.Emp.find({'Emp_dept':{$in:['Comp','IT']}});
+[
+  {
+    _id: ObjectId('67272bddd35eedd10c0d8190'),
+    Emp_id: 1,
+    Emp_name: 'shubham',
+    Emp_salary: 60000,
+    Emp_dept: 'Comp'
+  },
+  {
+    _id: ObjectId('67272be9d35eedd10c0d8191'),
+    Emp_id: 2,
+    Emp_name: 'omkar',
+    Emp_salary: 40000,
+    Emp_dept: 'IT'
+  }
+]
+test> db.Emp.find({'Emp_dept':{$nin:['Comp','IT']}});
+[
+  {
+    _id: ObjectId('67272bf2d35eedd10c0d8192'),
+    Emp_id: 3,
+    Emp_name: 'vikas',
+    Emp_salary: 50000,
+    Emp_dept: 'Civil'
+  }
+]
